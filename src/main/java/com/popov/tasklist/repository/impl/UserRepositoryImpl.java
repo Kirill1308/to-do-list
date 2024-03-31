@@ -9,8 +9,10 @@ import com.popov.tasklist.repository.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 
 @Repository
@@ -72,101 +74,129 @@ public class UserRepositoryImpl implements UserRepository {
             """;
 
     private final String INSERT_USER_ROLE = """
-            INSERT INTO user_roles (user_id, role)
+            INSERT INTO users_roles (user_id, role)
             VALUES (?, ?);
             """;
 
     private final String IS_TASK_OWNER = """
             SELECT EXISTS(
                 SELECT 1
-                FROM user_tasks
+                FROM users_tasks
                 WHERE user_id = ? AND task_id = ?
             );
             """;
 
     @Override
     public Optional<User> findByID(Long id) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setLong(1, id);
             try (var resultSet = statement.executeQuery()) {
                 return Optional.ofNullable(UserMapper.mapUser(resultSet));
             }
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while finding user by id");
+            throw new ResourceMappingException("Exception while finding user by id.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(FIND_BY_USERNAME, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(FIND_BY_USERNAME, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setString(1, username);
             try (var resultSet = statement.executeQuery()) {
                 return Optional.ofNullable(UserMapper.mapUser(resultSet));
             }
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while finding user by username, username: " + username + "Error: " + throwables.getMessage());
+            throw new ResourceMappingException("Exception while finding user by username.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
+
     }
 
     @Override
     public void update(User user) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(UPDATE)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(UPDATE);
             statement.setString(1, user.getName());
             statement.setString(2, user.getUsername());
             statement.setString(3, user.getPassword());
+            statement.executeUpdate();
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while updating user");
+            throw new ResourceMappingException("Exception while updating user.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
     }
 
     @Override
     public void create(User user) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(CREATE, ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getName());
             statement.setString(2, user.getUsername());
             statement.setString(3, user.getPassword());
             statement.executeUpdate();
             try (var resultSet = statement.getGeneratedKeys()) {
-                resultSet.next();
-                user.setId(resultSet.getLong(1));
+                if(resultSet.next()){
+                    user.setId(resultSet.getLong(1));
+                }
             }
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while creating user");
+            throw new ResourceMappingException("Exception while creating user.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
     }
 
     @Override
     public void delete(Long id) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(DELETE)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(DELETE);
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while deleting user");
+            throw new ResourceMappingException("Exception while deleting user.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
-
     }
 
     @Override
     public void insertUserRole(Long userId, Role role) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(INSERT_USER_ROLE)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(INSERT_USER_ROLE);
             statement.setLong(1, userId);
             statement.setString(2, role.name());
             statement.executeUpdate();
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while inserting user role");
+            throw new ResourceMappingException("Exception while inserting user role.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
     }
 
     @Override
     public boolean isTaskOwner(Long userId, Long taskId) {
-        try (var connection = dataSourceConfig.getConnection();
-             var statement = connection.prepareStatement(IS_TASK_OWNER)) {
+        Connection connection = null;
+        try {
+            connection = dataSourceConfig.getConnection();
+            var statement = connection.prepareStatement(IS_TASK_OWNER);
             statement.setLong(1, userId);
             statement.setLong(2, taskId);
             try (var resultSet = statement.executeQuery()) {
@@ -174,7 +204,9 @@ public class UserRepositoryImpl implements UserRepository {
                 return resultSet.getBoolean(1);
             }
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while checking if user is task owner");
+            throw new ResourceMappingException("Exception while checking if user is task owner.");
+        } finally {
+            dataSourceConfig.closeConnection(connection);
         }
     }
 }

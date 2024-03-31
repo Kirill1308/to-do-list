@@ -14,6 +14,8 @@ public class DataSourceConfig {
 
     public Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource);
-
+    }
+    public void closeConnection(Connection conn) {
+        DataSourceUtils.releaseConnection(conn, dataSource);
     }
 }

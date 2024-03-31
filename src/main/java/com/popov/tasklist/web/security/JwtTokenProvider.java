@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -94,7 +93,7 @@ public class JwtTokenProvider {
             throw new AccessDeniedException();
         }
         Long userId = Long.valueOf(getId(refreshToken));
-        User user = userService.getByID(userId);
+        User user = userService.getById(userId);
         jwtResponse.setId(userId);
         jwtResponse.setUsername(user.getUsername());
         jwtResponse.setAccessToken(

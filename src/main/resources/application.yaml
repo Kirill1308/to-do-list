@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tasklist
+    username: root
+    password: root
+    hikari:
+      auto-commit: false  # Disable auto-commit
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+security:
+  jwt:
+    secret: YmZlcmlvZmtsbWNzWUJISktsa2pmYkFLU0pESWJoamduZGt3O2Vma3Ys
+    access: 3600000
+    refresh: 2592000000
