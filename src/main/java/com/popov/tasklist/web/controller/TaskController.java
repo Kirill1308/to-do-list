@@ -1,9 +1,12 @@
 package com.popov.tasklist.web.controller;
 
 import com.popov.tasklist.domain.task.Task;
+import com.popov.tasklist.domain.task.TaskImage;
 import com.popov.tasklist.service.TaskService;
 import com.popov.tasklist.validation.OnUpdate;
 import com.popov.tasklist.web.dto.task.TaskDTO;
+import com.popov.tasklist.web.dto.task.TaskImageDTO;
+import com.popov.tasklist.web.mappers.TaskImageMapper;
 import com.popov.tasklist.web.mappers.TaskMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +15,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +32,7 @@ public class TaskController {
 
     private final TaskService taskService;
     private final TaskMapper taskMapper;
+    private final TaskImageMapper taskImageMapper;
 
     @PutMapping
     @Operation(summary = "Update task")
@@ -50,5 +56,13 @@ public class TaskController {
     @PreAuthorize("@customSecurityExpression.canAccessTask(#id)")
     public void deleteById(@PathVariable Long id) {
         taskService.delete(id);
+    }
+
+    @PostMapping("/{id}/image")
+    @Operation(summary = "Upload image to task")
+    @PreAuthorize("@customSecurityExpression.canAccessTask(#id)")
+    public void uploadImage(@PathVariable Long id, @Validated @ModelAttribute TaskImageDTO imageDTO){
+        TaskImage image = taskImageMapper.toEntity(imageDTO);
+        taskService.uploadImage(id, image);
     }
 }

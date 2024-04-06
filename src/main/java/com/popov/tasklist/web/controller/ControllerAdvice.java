@@ -2,6 +2,7 @@ package com.popov.tasklist.web.controller;
 
 import com.popov.tasklist.domain.exception.AccessDeniedException;
 import com.popov.tasklist.domain.exception.ExceptionBody;
+import com.popov.tasklist.domain.exception.ImageUploadException;
 import com.popov.tasklist.domain.exception.ResourceMappingException;
 import com.popov.tasklist.domain.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -70,6 +71,12 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleAuthentication(final AuthenticationException e) {
         return new ExceptionBody("Authentication failed. ");
+    }
+
+    @ExceptionHandler(ImageUploadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleException(ImageUploadException e) {
+        return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
