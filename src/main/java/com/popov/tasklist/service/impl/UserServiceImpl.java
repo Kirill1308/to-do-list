@@ -1,7 +1,6 @@
 package com.popov.tasklist.service.impl;
 
 import com.popov.tasklist.domain.exception.ResourceNotFoundException;
-import com.popov.tasklist.domain.task.Task;
 import com.popov.tasklist.domain.user.Role;
 import com.popov.tasklist.domain.user.User;
 import com.popov.tasklist.repository.UserRepository;
