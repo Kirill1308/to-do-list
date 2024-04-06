@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.popov.tasklist.repository.TaskRepository">
+    <resultMap id="TaskResultMap" type="com.popov.tasklist.domain.task.Task" autoMapping="true">
+        <id property="id" column="task_id"/>
+        <result property="title" column="task_title"/>
+        <result property="description" column="task_description"/>
+        <result property="expirationDate" column="task_expiration_date"/>
+        <result property="status" column="task_status"/>
+    </resultMap>
+
+    <select id="findByID" resultMap="TaskResultMap">
+        select t.id as task_id,
+        t.title as task_title,
+        t.description as task_description,
+        t.expiration_date as task_expiration_date,
+        t.status as task_status
+        from tasks t
+        where id = #{id}
+    </select>
+
+    <select id="findAllByUserID" resultMap="TaskResultMap">
+        select t.id as task_id,
+        t.title as task_title,
+        t.description as task_description,
+        t.expiration_date as task_expiration_date,
+        t.status as task_status
+        from tasks t
+        join users_tasks ut on t.id = ut.task_id
+        where user_id = #{userId}
+    </select>
+
+    <update id="update">
+        UPDATE tasks
+        SET title = #{title},
+        description = #{description}
+        expiration_date = #{expirationDate},
+        status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <insert id="assignToUserByID">
+        INSERT INTO users_tasks (task_id, user_id)
+        VALUES (taskId, userId)
+    </insert>
+
+
+    <insert id="create" keyProperty="id" useGeneratedKeys="true">
+        insert into tasks (title, description, expiration_date, status)
+        values (#{title}, #{description}, #{expirationDate}, #{status})
+    </insert>
+
+    <select id="delete">
+        DELETE FROM tasks
+        WHERE id = #{id}
+    </select>
+
+</mapper>

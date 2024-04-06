@@ -85,9 +85,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public JwtResponse refreshUserTokens(
-            final String refreshToken
-    ) {
+    public JwtResponse refreshUserTokens(final String refreshToken) {
         JwtResponse jwtResponse = new JwtResponse();
         if (!isValid(refreshToken)) {
             throw new AccessDeniedException();
@@ -105,9 +103,7 @@ public class JwtTokenProvider {
         return jwtResponse;
     }
 
-    public boolean isValid(
-            final String token
-    ) {
+    public boolean isValid(final String token) {
         Jws<Claims> claims = Jwts
                 .parser()
                 .verifyWith(key)
@@ -118,9 +114,7 @@ public class JwtTokenProvider {
                 .after(new Date());
     }
 
-    private String getId(
-            final String token
-    ) {
+    private String getId(final String token) {
         return Jwts
                 .parser()
                 .verifyWith(key)
@@ -130,9 +124,7 @@ public class JwtTokenProvider {
                 .get("id", String.class);
     }
 
-    private String getUsername(
-            final String token
-    ) {
+    private String getUsername(final String token) {
         return Jwts
                 .parser()
                 .verifyWith(key)
@@ -142,9 +134,7 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public Authentication getAuthentication(
-            final String token
-    ) {
+    public Authentication getAuthentication(final String token) {
         String username = getUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(
                 username
