@@ -5,7 +5,5 @@ import com.popov.tasklist.web.dto.user.UserDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-     UserDTO toDto(User user);
-     User toEntity(UserDTO userDto);
+public interface UserMapper extends Mappable<User, UserDTO> {
 }

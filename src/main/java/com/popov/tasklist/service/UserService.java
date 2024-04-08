@@ -3,7 +3,7 @@ package com.popov.tasklist.service;
 import com.popov.tasklist.domain.user.User;
 
 public interface UserService {
-    User getByID(Long id);
+    User getById(Long id);
 
     User getByUsername(String username);
 
@@ -14,4 +14,6 @@ public interface UserService {
     boolean isTaskOwner(Long userId, Long taskId);
 
     void delete(Long id);
+
+    User getTaskAuthor(Long taskId);
 }
