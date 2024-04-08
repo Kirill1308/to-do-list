@@ -20,7 +20,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public JwtResponse login(JwtRequest loginRequest) {
+    public JwtResponse login(final JwtRequest loginRequest) {
         JwtResponse jwtResponse = new JwtResponse();
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtResponse refresh(String refreshToken) {
+    public JwtResponse refresh(final String refreshToken) {
         return jwtTokenProvider.refreshUserTokens(refreshToken);
     }
 }

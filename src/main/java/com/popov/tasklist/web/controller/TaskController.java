@@ -37,7 +37,7 @@ public class TaskController {
     @PutMapping
     @Operation(summary = "Update task")
     @PreAuthorize("@customSecurityExpression.canAccessTask(taskDTO.id)")
-    public TaskDTO update(@Validated(OnUpdate.class) @RequestBody TaskDTO taskDTO) {
+    public TaskDTO update(@Validated(OnUpdate.class) @RequestBody final TaskDTO taskDTO) {
         Task task = taskMapper.toEntity(taskDTO);
         Task updatedTask = taskService.update(task);
         return taskMapper.toDto(updatedTask);
@@ -46,7 +46,7 @@ public class TaskController {
     @GetMapping("/{id}")
     @Operation(summary = "Get taskDTO by Id")
     @PreAuthorize("@customSecurityExpression.canAccessTask(#id)")
-    public TaskDTO getById(@PathVariable Long id) {
+    public TaskDTO getById(final @PathVariable Long id) {
         Task task = taskService.getByID(id);
         return taskMapper.toDto(task);
     }
@@ -54,14 +54,14 @@ public class TaskController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete task by Id")
     @PreAuthorize("@customSecurityExpression.canAccessTask(#id)")
-    public void deleteById(@PathVariable Long id) {
+    public void deleteById(final @PathVariable Long id) {
         taskService.delete(id);
     }
 
     @PostMapping("/{id}/image")
     @Operation(summary = "Upload image to task")
     @PreAuthorize("@customSecurityExpression.canAccessTask(#id)")
-    public void uploadImage(@PathVariable Long id, @Validated @ModelAttribute TaskImageDTO imageDTO) {
+    public void uploadImage(final @PathVariable Long id, final @Validated @ModelAttribute TaskImageDTO imageDTO) {
         TaskImage image = taskImageMapper.toEntity(imageDTO);
         taskService.uploadImage(id, image);
     }

@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class ControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody handleResourceNotFound(ResourceNotFoundException e) {
+    public ExceptionBody handleResourceNotFound(final ResourceNotFoundException e) {
         return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(ResourceMappingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody handleResourceMapping(ResourceMappingException e) {
+    public ExceptionBody handleResourceMapping(final ResourceMappingException e) {
         return new ExceptionBody(e.getMessage());
     }
 
@@ -45,7 +45,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ExceptionBody handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
         ExceptionBody exceptionBody = new ExceptionBody("Validation failed.");
         List<FieldError> errors = e.getBindingResult().getFieldErrors();
         exceptionBody.setErrors(errors.stream()
@@ -56,7 +56,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleConstraintViolation(ConstraintViolationException e) {
+    public ExceptionBody handleConstraintViolation(final ConstraintViolationException e) {
         ExceptionBody exceptionBody = new ExceptionBody("Validation failed.");
         exceptionBody.setErrors(e.getConstraintViolations().stream()
                 .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(),
@@ -73,13 +73,13 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ImageUploadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleException(ImageUploadException e) {
+    public ExceptionBody handleException(final ImageUploadException e) {
         return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody handleException(Exception e) {
+    public ExceptionBody handleException(final Exception e) {
         e.printStackTrace();
         return new ExceptionBody("Internal error.");
     }
